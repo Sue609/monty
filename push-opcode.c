@@ -1,4 +1,7 @@
 #include "monty.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * push - a function that pushes an element to a stack.
@@ -10,7 +13,7 @@
 
 void push(stack_t **stack, int data)
 {
-	stack_t *newNode = malloc(sizeof(newNode));
+	stack_t *newNode = malloc(sizeof(stack_t));
 
 	if (newNode == NULL)
 	{
@@ -44,4 +47,55 @@ void pall(stack_t **stack)
 		printf("%d\n", current->n);
 		current = current->next;
 	}
+}
+
+
+/**
+ * is_number - function that checks if the string is a valid int.
+ * @str: string to be checked.
+ * Return: 1 or 0.
+ */
+int is_number(char *str)
+{
+	int i = 0;
+
+	if (str == NULL)
+		return (0);
+	if (str[0] == '-' || str[0] == '+')
+		i++;
+	for (; str[i] != '\0'; i++)
+	{
+
+		if (str[i] < '0' || str[i] > '9')
+			return (0);
+	}
+	return (1);
+}
+
+
+
+/**
+ * add_node - Adds a new node to the stack.
+ * @stack: Double pointer to the top of the stack.
+ * @data: Data to be stored in the new node.
+ * Return: Pointer to the newly added node.
+ */
+
+stack_t *add_node(stack_t **stack, int data)
+{
+	stack_t *new_node = malloc(sizeof(stack_t));
+
+	if (new_node == NULL)
+	{
+		fprintf(stderr, "Error: malloc failed\n");
+		exit(EXIT_FAILURE);
+	}
+	new_node->n = data;
+	new_node->prev = NULL;
+	new_node->next = *stack;
+
+	if (*stack != NULL)
+		(*stack)->prev = new_node;
+	*stack = new_node;
+	return (new_node);
 }

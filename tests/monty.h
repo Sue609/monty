@@ -88,7 +88,4 @@ void execute_div(stack_t **stack, unsigned int line_number);
 void execute_mul(stack_t **stack, unsigned int line_number);
 void execute_mod(stack_t **stack, unsigned int line_number);
 void execute_pchar(stack_t **stack, unsigned int line_number);
-
-int is_number(char *str);
-stack_t *add_node(stack_t **stack, int data);
 #endif /* MONTY_H */
