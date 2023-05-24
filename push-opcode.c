@@ -6,38 +6,20 @@
 /**
  * push - a function that pushes an element to a stack.
  * @stack: Pointer to the top of the stack.
- * @line_number: data to the added to the stack.
- * @arg: parameter that represents the arguement passed
- * to the push opcode
+ * @data: data to the added to the stack.
  *
  * Return: nothing.
  */
 
-void push(stack_t **stack, const char *arg, unsigned int line_number)
+void push(stack_t** stack, int data)
 {
-	int i;
-	int data = atoi(arg);
-	stack_t *newNode = malloc(sizeof(stack_t));
+	stack_t* newNode = malloc(sizeof(stack_t));
 
-	if (arg == NULL || *arg == '\0')
-	{
-		fprintf(stderr, "L%u: usage: push integer\n", line_number);
-		exit(EXIT_FAILURE);
-	}
-	for (i = 0; arg[i] != '\0'; i++)
-	{
-		if ((arg[i] < '0' || arg[i] > '9') && arg[i] != '-')
-		{
-			fprintf(stderr, "L%u: usage: push integer\n", line_number);
-			exit(EXIT_FAILURE);
-		}
-	}
 	if (newNode == NULL)
 	{
 		fprintf(stderr, "Error: Memory allocation failed\n");
 		exit(EXIT_FAILURE);
 	}
-
 	newNode->n = data;
 	newNode->next = *stack;
 	*stack = newNode;
