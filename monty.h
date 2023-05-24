@@ -82,4 +82,10 @@ void handle_error(stack_t **stack, FILE *file,
 void execute_instruction(stack_t **stack, char *opcode,
 		unsigned int line_number, FILE *file, Mode mode);
 
+
+void execute_sub(stack_t **stack, unsigned int line_number);
+void execute_div(stack_t **stack, unsigned int line_number);
+void execute_mul(stack_t **stack, unsigned int line_number);
+void execute_mod(stack_t **stack, unsigned int line_number);
+void execute_pchar(stack_t **stack, unsigned int line_number);
 #endif /* MONTY_H */

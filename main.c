@@ -1,9 +1,6 @@
 #include "monty.h"
 #include <string.h>
 
-void handle_error(stack_t **stack, FILE *file, unsigned int line_number, const char *error_message);
-void execute_instruction(stack_t **stack, char *opcode, unsigned int line_number, FILE *file, Mode mode);
-
 
 /**
  * main - The beginning of the code. The main function takes 2 arguements.
@@ -47,13 +44,14 @@ int main(int argc, char *argv[])
 				push(&stack, data);
 			else if (mode == QUEUE)
 				enqueue(&stack, data); }
+		else if (strcmp(opcode, "pall") == 0)
+			pall(&stack);
 		else
 			execute_instruction(&stack, opcode, line_number, file, mode);
 		line_number++; }
 	fclose(file);
 	free_stack(&stack);
-	return (0);
-}
+	return (0); }
 
 
 /**
@@ -67,11 +65,10 @@ int main(int argc, char *argv[])
  * Return: nothing.
  */
 
-void execute_instruction(stack_t **stack, char *opcode, unsigned int line_number, FILE *file, Mode mode)
+void execute_instruction(stack_t **stack, char *opcode,
+		unsigned int line_number, FILE *file, Mode mode)
 {
-	if (strcmp(opcode, "pall") == 0)
-		pall(stack);
-	else if (strcmp(opcode, "pint") == 0)
+	if (strcmp(opcode, "pint") == 0)
 	{
 		if (*stack == NULL)
 			handle_error(stack, NULL, line_number, "can't pint, stack empty");
@@ -89,30 +86,15 @@ void execute_instruction(stack_t **stack, char *opcode, unsigned int line_number
 	else if (strcmp(opcode, "nop") == 0)
 		nop(stack, line_number);
 	else if (strcmp(opcode, "sub") == 0)
-	{
-		if (*stack == NULL || (*stack)->next == NULL)
-			handle_error(stack, NULL, line_number, "can't pint, stack empty");
-		sub(stack, line_number); }
+		execute_sub(stack, line_number);
 	else if (strcmp(opcode, "div") == 0)
-	{
-		if (*stack == NULL || (*stack)->next == NULL)
-			handle_error(stack, NULL, line_number, "can't pint, stack empty");
-		div_stack(stack, line_number); }
+		execute_div(stack, line_number);
 	else if (strcmp(opcode, "mul") == 0)
-	{
-		if (*stack == NULL || (*stack)->next == NULL)
-			handle_error(stack, NULL, line_number, "can't pint, stack empty");
-		mul_stack(stack, line_number); }
+		execute_mul(stack, line_number);
 	else if (strcmp(opcode, "mod") == 0)
-	{
-		if (*stack == NULL || (*stack)->next == NULL)
-			handle_error(stack, NULL, line_number, "can't pint, stack empty")
-		mod_stack(stack, line_number); }
+		execute_mod(stack, line_number);
 	else if (strcmp(opcode, "pchar") == 0)
-	{
-		if (*stack == NULL)
-			handle_error(stack, NULL, line_number, "can't pint, stack empty");
-		pchar_stack(stack, line_number); }
+		execute_pchar(stack, line_number);
 	else if (strcmp(opcode, "pstr") == 0)
 		pstr_stack(stack, line_number);
 	else if (strcmp(opcode, "rotl") == 0)
@@ -124,8 +106,9 @@ void execute_instruction(stack_t **stack, char *opcode, unsigned int line_number
 		fprintf(stderr, "L%u: unknown instruction %s\n", line_number, opcode);
 		fclose(file);
 		free_stack(stack);
-		exit(EXIT_FAILURE); } }
-
+		exit(EXIT_FAILURE);
+	}
+}
 
 /**
  * handle_error - function that handles errors in the opcode
@@ -137,7 +120,8 @@ void execute_instruction(stack_t **stack, char *opcode, unsigned int line_number
  *
  * Return: nothing.
  */
-void handle_error(stack_t **stack, FILE *file, unsigned int line_number, const char *error_message)
+void handle_error(stack_t **stack, FILE *file,
+		unsigned int line_number, const char *error_message)
 {
 	fprintf(stderr, "L%u: %s\n", line_number, error_message);
 
