@@ -14,10 +14,11 @@ int main(int argc, char *argv[])
 {
 	stack_t *stack = NULL;
 	char opcode[100];
-	int data;
+	/*int data;*/
 	unsigned int line_number = 1;
 	FILE *file;
 	Mode mode = STACK;
+	char arg[100];
 
 	if (argc != 2)
 	{
@@ -38,12 +39,12 @@ int main(int argc, char *argv[])
 			mode = QUEUE;
 		else if (strcmp(opcode, "push") == 0)
 		{
-			if (fscanf(file, "%d", &data) != 1)
+			if (fscanf(file, "%s", arg) != 1)
 				handle_error(&stack, file, line_number, "usage: push integer");
 			if (mode == STACK)
-				push(&stack, data);
-			else if (mode == QUEUE)
-				enqueue(&stack, data); }
+				push(&stack, arg, line_number);
+			/*else if (mode == QUEUE)
+				enqueue(&stack, arg, line_number);*/ }
 		else if (strcmp(opcode, "pall") == 0)
 			pall(&stack);
 		else

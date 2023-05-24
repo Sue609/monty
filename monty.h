@@ -37,7 +37,6 @@ typedef struct instruction_s
 } instruction_t;
 
 
-void push(stack_t **stack, int data);
 void pall(stack_t **stack);
 void free_stack(stack_t **stack);
 void pint(stack_t *stack, unsigned int line_number);
@@ -91,4 +90,5 @@ void execute_pchar(stack_t **stack, unsigned int line_number);
 
 int is_number(char *str);
 stack_t *add_node(stack_t **stack, int data);
+void push(stack_t** stack, const char* arg, unsigned int line_number);
 #endif /* MONTY_H */
