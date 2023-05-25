@@ -17,7 +17,7 @@ void push(stack_t **stack, int data)
 
 	if (newNode == NULL)
 	{
-		fprintf(stderr, "Error: Memory allocation failed\n");
+		fprintf(stderr, "Error: malloc failed\n");
 		exit(EXIT_FAILURE);
 	}
 	newNode->n = data;
