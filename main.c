@@ -150,7 +150,8 @@ void execute_other_instructions(stack_t **stack, char *opcode,
 		unsigned int line_number, FILE *file)
 {
 	if (strcmp(opcode, "sub") == 0)
-		execute_sub(stack, line_number);
+	/*	execute_sub(stack, line_number);*/
+		sub(stack, line_number);
 
 	else if (strcmp(opcode, "div") == 0)
 		execute_div(stack, line_number);
