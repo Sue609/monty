@@ -126,9 +126,7 @@ void execute_instruction(stack_t **stack, char *opcode,
 	else if (strcmp(opcode, "nop") == 0)
 		nop(stack, line_number);
 	else
-	{
 		execute_other_instructions(stack, opcode, line_number, file);
-	}
 }
 
 
