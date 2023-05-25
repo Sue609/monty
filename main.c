@@ -13,8 +13,7 @@
 int main(int argc, char *argv[])
 {
 	stack_t *stack = NULL;
-	char line[100], opcode[100], arg[100];
-	int data;
+	char line[100];
 	unsigned int line_number = 1;
 	FILE *file;
 	Mode mode = STACK;
@@ -22,41 +21,71 @@ int main(int argc, char *argv[])
 	if (argc != 2)
 	{
 		fprintf(stderr, "USAGE: monty file\n");
-		return (EXIT_FAILURE); }
+		return (EXIT_FAILURE);
+	}
+
 	file = fopen(argv[1], "r");
 	if (file == NULL)
 	{
 		fprintf(stderr, "Error: Can't open file %s\n", argv[1]);
-		exit(EXIT_FAILURE); }
+		exit(EXIT_FAILURE);
+	}
+
 	while (fgets(line, sizeof(line), file))
 	{
-		if (line[0] == '\n' || line[0] == '#')
-			continue;
-		if (sscanf(line, "%s", opcode) != 1)
-			handle_error(&stack, file, line_number, "Invalid opcode");
-		if (strcmp(opcode, "stack") == 0)
-			mode = STACK;
-		else if (strcmp(opcode, "queue") == 0)
-			mode = QUEUE;
-		else if (strcmp(opcode, "push") == 0)
-		{
-			if (sscanf(line, "%*s %[^\n]", arg) != 1)
-			{
-				printf("Debug: Invalid argument for push instruction\n");
-				handle_error(&stack, file, line_number, "usage: push integer"); }
-			data = atoi(arg);
-			if (mode == STACK)
-				push(&stack, data);
-			else if (mode == QUEUE)
-				 enqueue(&stack, data); }
-		else
-			execute_instruction(&stack, opcode, line_number, file, mode);
-		line_number++; }
+		handle_instruction(&stack, line, line_number, mode, file);
+		line_number++;
+	}
 	fclose(file);
 	free_stack(&stack);
-	return (0); }
+	return (0);
+}
 
 
+
+
+void handle_instruction(stack_t **stack, char *line,
+		unsigned int line_number, Mode mode, FILE *file)
+{
+	char trimmed_line[100], opcode[100], arg[100];
+	char *trimmed_ptr = trimmed_line;
+	size_t len = strlen(line);
+	int data;
+
+	while (isspace(*line))
+		line++;
+	while (len > 0 && isspace(line[len - 1]))
+		line[--len] = '\0';
+
+	strcpy(trimmed_ptr, line);
+	if (is_empty_or_spaces(trimmed_line) || trimmed_line[0] == '#')
+		return;
+
+	if (sscanf(trimmed_line, "%s", opcode) != 1)
+		handle_error(stack, file, line_number, "Invalid opcode");
+
+	if (strcmp(opcode, "stack") == 0)
+		mode = STACK;
+
+	else if (strcmp(opcode, "queue") == 0)
+		mode = QUEUE;
+
+	else if (strcmp(opcode, "push") == 0)
+	{
+		if (sscanf(line, "%*s %[^\n]", arg) != 1)
+		{
+			printf("Debug: Invalid argument for push instruction\n");
+			handle_error(stack, file, line_number, "usage: push integer");
+		}
+		data = atoi(arg);
+		if (mode == STACK)
+			push(stack, data);
+		else if (mode == QUEUE)
+			enqueue(stack, data);
+	}
+	else
+		execute_instruction(stack, opcode, line_number, file, mode);
+}
 /**
  * execute_instruction - function that executes the opcode instructions.
  * @stack:  This is the pointer to the top of the stack.
@@ -71,6 +100,10 @@ int main(int argc, char *argv[])
 void execute_instruction(stack_t **stack, char *opcode,
 		unsigned int line_number, FILE *file, Mode mode)
 {
+	char arg[100] = "";
+
+	arg[strcspn(arg, " \t\n")] = '\0';
+
 	if (strcmp(opcode, "pall") == 0)
 		pall(stack);
 	else if (strcmp(opcode, "pint") == 0)
@@ -90,20 +123,46 @@ void execute_instruction(stack_t **stack, char *opcode,
 		add(stack, line_number);
 	else if (strcmp(opcode, "nop") == 0)
 		nop(stack, line_number);
-	else if (strcmp(opcode, "sub") == 0)
+	else
+	{
+		execute_other_instructions(stack, opcode, line_number, file);
+	}
+}
+
+
+/**
+ * execute_other_instructions - F unction that executes the other opcodes.
+ * @stack:  This is the pointer to the top of the stack.
+ * @opcode: The code that is converted to monty.
+ * @line_number: Current line number in the monty file.
+ *  @file: character pointer containing a 100 characters in space memory.
+ *
+ *  Return: nothing.
+ */
+void execute_other_instructions(stack_t **stack, char *opcode,
+		unsigned int line_number, FILE *file)
+{
+	if (strcmp(opcode, "sub") == 0)
 		execute_sub(stack, line_number);
+
 	else if (strcmp(opcode, "div") == 0)
 		execute_div(stack, line_number);
+
 	else if (strcmp(opcode, "mul") == 0)
 		execute_mul(stack, line_number);
+
 	else if (strcmp(opcode, "mod") == 0)
 		execute_mod(stack, line_number);
+
 	else if (strcmp(opcode, "pchar") == 0)
 		execute_pchar(stack, line_number);
+
 	else if (strcmp(opcode, "pstr") == 0)
 		pstr_stack(stack, line_number);
+
 	else if (strcmp(opcode, "rotl") == 0)
 		rot1_stack(stack, line_number);
+
 	else if (strcmp(opcode, "rotr") == 0)
 		rotr_stack(stack);
 	else
@@ -111,7 +170,8 @@ void execute_instruction(stack_t **stack, char *opcode,
 		fprintf(stderr, "L%u: unknown instruction %s\n", line_number, opcode);
 		fclose(file);
 		free_stack(stack);
-		exit(EXIT_FAILURE); }
+		exit(EXIT_FAILURE);
+	}
 }
 
 /**

@@ -29,11 +29,15 @@ void push(stack_t **stack, int data)
 
 	*stack = newNode;
 }
+
+
+
 /**
  * pall - prints all the values on the stack,
  * starting from the top of the stack.
  * @stack: Double pointer to the top of the stack.
  */
+
 void pall(stack_t **stack)
 {
 	stack_t *current = *stack;

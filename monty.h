@@ -37,6 +37,8 @@ typedef struct instruction_s
 } instruction_t;
 
 
+
+
 void pall(stack_t **stack);
 void free_stack(stack_t **stack);
 void pint(stack_t *stack, unsigned int line_number);
@@ -53,6 +55,8 @@ void pchar_stack(stack_t **stack, unsigned int line_number);
 void pstr_stack(stack_t **stack, unsigned int line_number);
 void rot1_stack(stack_t **stack, unsigned int line_number);
 void rotr_stack(stack_t **stack);
+
+
 
 /**
  * Mode - Represents the mode of operation for the stack.
@@ -80,6 +84,11 @@ void handle_error(stack_t **stack, FILE *file,
 		unsigned int line_number, const char *error_message);
 void execute_instruction(stack_t **stack, char *opcode,
 		unsigned int line_number, FILE *file, Mode mode);
+void handle_instruction(stack_t **stack, char *line,
+		unsigned int line_number, Mode mode, FILE *file);
+int is_empty_or_spaces(const char *str);
+void execute_other_instructions(stack_t **stack, char *opcode,
+		unsigned int line_number, FILE *file);
 
 
 void execute_sub(stack_t **stack, unsigned int line_number);
