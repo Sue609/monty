@@ -10,17 +10,12 @@
 
 void sub(stack_t **stack, unsigned int line_number)
 {
-	int a;
-	int b;
-
 	if (*stack == NULL || (*stack)->next == NULL)
 	{
 		fprintf(stderr, "L%u: can't sub, stack too short\n", line_number);
 		exit(EXIT_FAILURE);
 	}
-	a = (*stack)->n;
-	b = (*stack)->next->n;
 
-	(*stack)->next->n = b - a;
+	(*stack)->next->n -= (*stack)->n;
 	pop_stack(stack, line_number);
 }
