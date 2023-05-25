@@ -159,10 +159,10 @@ void execute_other_instructions(stack_t **stack, char *opcode,
 		mul_stack(stack, line_number);
 
 	else if (strcmp(opcode, "mod") == 0)
-		mod_stack(stack, line_number);
+		execute_mod(stack, line_number)
 
 	else if (strcmp(opcode, "pchar") == 0)
-		mod_stack(stack, line_number);
+		execute_pchar(stack, line_number);
 
 	else if (strcmp(opcode, "pstr") == 0)
 		pstr_stack(stack, line_number);
