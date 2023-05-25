@@ -78,11 +78,11 @@ void handle_instruction(stack_t **stack, char *line,
 
 	else if (strcmp(opcode, "push") == 0)
 	{
-		if (sscanf(line, "%*s %[^\n]", arg) != 1)
+		/*if (sscanf(line, "%*s %[^\n]", arg) != 1)
 		{
 			printf("Debug: Invalid argument for push instruction\n");
 			handle_error(stack, file, line_number, "usage: push integer");
-		}
+		}*/
 		data = atoi(arg);
 		if (*mode == STACK)
 			push(stack, data);
@@ -150,20 +150,19 @@ void execute_other_instructions(stack_t **stack, char *opcode,
 		unsigned int line_number, FILE *file)
 {
 	if (strcmp(opcode, "sub") == 0)
-	/*	execute_sub(stack, line_number);*/
 		sub(stack, line_number);
 
 	else if (strcmp(opcode, "div") == 0)
-		execute_div(stack, line_number);
+		div_stack(stack, line_number);
 
 	else if (strcmp(opcode, "mul") == 0)
-		execute_mul(stack, line_number);
+		mul_stack(stack, line_number);
 
 	else if (strcmp(opcode, "mod") == 0)
-		execute_mod(stack, line_number);
+		mod_stack(stack, line_number);
 
 	else if (strcmp(opcode, "pchar") == 0)
-		execute_pchar(stack, line_number);
+		mod_stack(stack, line_number);
 
 	else if (strcmp(opcode, "pstr") == 0)
 		pstr_stack(stack, line_number);
