@@ -56,26 +56,21 @@ void handle_instruction(stack_t **stack, char *line,
 		line++;
 	while (len > 0 && isspace(line[len - 1]))
 		line[--len] = '\0';
-
 	strcpy(trimmed_ptr, line);
 	if (is_empty_or_spaces(trimmed_line) || trimmed_line[0] == '#')
 		return;
-
 	if (sscanf(trimmed_line, "%s", opcode) != 1)
 		handle_error(stack, file, line_number, "Invalid opcode");
-
 	if (strcmp(opcode, "stack") == 0)
 	{
 		*mode = STACK;
 		return;
 	}
-
 	else if (strcmp(opcode, "queue") == 0)
 	{
 		*mode = QUEUE;
 		return;
 	}
-
 	else if (strcmp(opcode, "push") == 0)
 	{
 		if (sscanf(line, "%*s %[^\n]", arg) != 1)
