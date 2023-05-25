@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 
 	while (fgets(line, sizeof(line), file))
 	{
-		handle_instruction(&stack, line, line_number, mode, file);
+		handle_instruction(&stack, line, line_number, &mode, file);
 		line_number++;
 	}
 	fclose(file);
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
 
 void handle_instruction(stack_t **stack, char *line,
-		unsigned int line_number, Mode mode, FILE *file)
+		unsigned int line_number, Mode *mode, FILE *file)
 {
 	char trimmed_line[100], opcode[100], arg[100];
 	char *trimmed_ptr = trimmed_line;
@@ -65,10 +65,16 @@ void handle_instruction(stack_t **stack, char *line,
 		handle_error(stack, file, line_number, "Invalid opcode");
 
 	if (strcmp(opcode, "stack") == 0)
-		mode = STACK;
+	{
+		*mode = STACK;
+		return;
+	}
 
 	else if (strcmp(opcode, "queue") == 0)
-		mode = QUEUE;
+	{
+		*mode = QUEUE;
+		return;
+	}
 
 	else if (strcmp(opcode, "push") == 0)
 	{
@@ -78,13 +84,14 @@ void handle_instruction(stack_t **stack, char *line,
 			handle_error(stack, file, line_number, "usage: push integer");
 		}
 		data = atoi(arg);
-		if (mode == STACK)
+		if (*mode == STACK)
 			push(stack, data);
-		else if (mode == QUEUE)
+		else if (*mode == QUEUE)
 			enqueue(stack, data);
+		return;
 	}
 	else
-		execute_instruction(stack, opcode, line_number, file, mode);
+		execute_instruction(stack, opcode, line_number, file, &mode);
 }
 /**
  * execute_instruction - function that executes the opcode instructions.
@@ -98,7 +105,7 @@ void handle_instruction(stack_t **stack, char *line,
  */
 
 void execute_instruction(stack_t **stack, char *opcode,
-		unsigned int line_number, FILE *file, Mode mode)
+		unsigned int line_number, FILE *file, Mode **mode)
 {
 	char arg[100] = "";
 
@@ -113,9 +120,9 @@ void execute_instruction(stack_t **stack, char *opcode,
 		pint(*stack, line_number); }
 	else if (strcmp(opcode, "pop") == 0)
 	{
-		if (mode == STACK)
+		if (**mode == STACK)
 			pop_stack(stack, line_number);
-		else if (mode == QUEUE)
+		else if (**mode == QUEUE)
 			dequeue(stack, line_number); }
 	else if (strcmp(opcode, "swap") == 0)
 		swap(stack, line_number);

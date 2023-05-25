@@ -83,9 +83,9 @@ void process_opcode(stack_t **stack, char *opcode, int data,
 void handle_error(stack_t **stack, FILE *file,
 		unsigned int line_number, const char *error_message);
 void execute_instruction(stack_t **stack, char *opcode,
-		unsigned int line_number, FILE *file, Mode mode);
+		unsigned int line_number, FILE *file, Mode **mode);
 void handle_instruction(stack_t **stack, char *line,
-		unsigned int line_number, Mode mode, FILE *file);
+		unsigned int line_number, Mode *mode, FILE *file);
 int is_empty_or_spaces(const char *str);
 void execute_other_instructions(stack_t **stack, char *opcode,
 		unsigned int line_number, FILE *file);
