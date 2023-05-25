@@ -91,4 +91,7 @@ void execute_pchar(stack_t **stack, unsigned int line_number);
 int is_number(char *str);
 stack_t *add_node(stack_t **stack, int data);
 void push(stack_t** stack, int data);
+
+void toLowerCase(char *str);
+void trim_whitespace(char *line);
 #endif /* MONTY_H */

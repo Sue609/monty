@@ -11,9 +11,9 @@
  * Return: nothing.
  */
 
-void push(stack_t** stack, int data)
+void push(stack_t **stack, int data)
 {
-	stack_t* newNode = malloc(sizeof(stack_t));
+	stack_t *newNode = malloc(sizeof(stack_t));
 
 	if (newNode == NULL)
 	{

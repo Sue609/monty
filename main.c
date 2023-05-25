@@ -13,7 +13,7 @@
 int main(int argc, char *argv[])
 {
 	stack_t *stack = NULL;
-	char opcode[100];
+	char line[100], opcode[100], arg[100];
 	int data;
 	unsigned int line_number = 1;
 	FILE *file;
@@ -22,30 +22,33 @@ int main(int argc, char *argv[])
 	if (argc != 2)
 	{
 		fprintf(stderr, "USAGE: monty file\n");
-		return (EXIT_FAILURE);
-	}
+		return (EXIT_FAILURE); }
 	file = fopen(argv[1], "r");
 	if (file == NULL)
 	{
 		fprintf(stderr, "Error: Can't open file %s\n", argv[1]);
-		exit(EXIT_FAILURE);
-	}
-	while (fscanf(file, "%s", opcode) != EOF)
+		exit(EXIT_FAILURE); }
+	while (fgets(line, sizeof(line), file))
 	{
+		if (line[0] == '\n' || line[0] == '#')
+			continue;
+		if (sscanf(line, "%s", opcode) != 1)
+			handle_error(&stack, file, line_number, "Invalid opcode");
 		if (strcmp(opcode, "stack") == 0)
 			mode = STACK;
 		else if (strcmp(opcode, "queue") == 0)
 			mode = QUEUE;
 		else if (strcmp(opcode, "push") == 0)
 		{
-			if (fscanf(file, "%d", &data) != 1)
-				handle_error(&stack, file, line_number, "usage: push integer");
+			if (sscanf(line, "%*s %[^\n]", arg) != 1)
+			{
+				printf("Debug: Invalid argument for push instruction\n");
+				handle_error(&stack, file, line_number, "usage: push integer"); }
+			data = atoi(arg);
 			if (mode == STACK)
 				push(&stack, data);
 			else if (mode == QUEUE)
-				enqueue(&stack, data); }
-		else if (strcmp(opcode, "pall") == 0)
-			pall(&stack);
+				 enqueue(&stack, data); }
 		else
 			execute_instruction(&stack, opcode, line_number, file, mode);
 		line_number++; }
@@ -68,7 +71,9 @@ int main(int argc, char *argv[])
 void execute_instruction(stack_t **stack, char *opcode,
 		unsigned int line_number, FILE *file, Mode mode)
 {
-	if (strcmp(opcode, "pint") == 0)
+	if (strcmp(opcode, "pall") == 0)
+		pall(stack);
+	else if (strcmp(opcode, "pint") == 0)
 	{
 		if (*stack == NULL)
 			handle_error(stack, NULL, line_number, "can't pint, stack empty");
@@ -106,8 +111,7 @@ void execute_instruction(stack_t **stack, char *opcode,
 		fprintf(stderr, "L%u: unknown instruction %s\n", line_number, opcode);
 		fclose(file);
 		free_stack(stack);
-		exit(EXIT_FAILURE);
-	}
+		exit(EXIT_FAILURE); }
 }
 
 /**

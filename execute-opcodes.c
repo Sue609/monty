@@ -2,7 +2,7 @@
 
 
 /**
- * execute-sub - Function that executes and calls the sub function.
+ * execute_sub - Function that executes and calls the sub function.
  * @stack: A pointer to the first stack.
  * @line_number: Current line in the monty file.
  */
