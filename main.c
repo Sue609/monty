@@ -57,15 +57,14 @@ void handle_instruction(stack_t **stack, char *line,
 		unsigned int line_number, Mode *mode, FILE *file)
 {
 	char trimmed_line[100], opcode[100], arg[100];
-	char *endptr, *trimmed_ptr = trimmed_line;
 	size_t len = strlen(line);
-	long int data;
+	int data;
 
 	while (isspace(*line))
 		line++;
 	while (len > 0 && isspace(line[len - 1]))
 		line[--len] = '\0';
-	strcpy(trimmed_ptr, line);
+	strcpy(trimmed_line, line);
 	if (is_empty_or_spaces(trimmed_line) || trimmed_line[0] == '#')
 		return;
 	if (sscanf(trimmed_line, "%s", opcode) != 1)
@@ -83,12 +82,9 @@ void handle_instruction(stack_t **stack, char *line,
 		if (sscanf(line, "%*s %[^\n]", arg) != 1)
 		{
 			handle_error(stack, file, line_number, "usage: push integer");
-			exit(EXIT_FAILURE); }
-		data = strtol(arg, &endptr, 10);
-		if (*endptr != '\0')
-		{
-			handle_error(stack, file, line_number, "usage: push integer");
-			exit(EXIT_FAILURE); }
+			exit(EXIT_FAILURE);
+		}
+		data = atoi(arg);
 		if (*mode == STACK)
 			push(stack, data);
 		else if (*mode == QUEUE)
