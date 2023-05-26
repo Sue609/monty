@@ -42,15 +42,24 @@ int main(int argc, char *argv[])
 }
 
 
-
+/**
+ * handle_instruction - function that handles other opcode instructions.
+ * @stack:  This is the pointer to the top of the stack.
+ * @line_number: Current line number in the monty file.
+ * @file: character pointer containing a 100 characters in space memory.
+ * @mode: A struct that contains the mode either in stack or queue mode.
+ * @line: The line of the opcode
+ *
+ * Return: nothing
+ */
 
 void handle_instruction(stack_t **stack, char *line,
 		unsigned int line_number, Mode *mode, FILE *file)
 {
 	char trimmed_line[100], opcode[100], arg[100];
-	char *trimmed_ptr = trimmed_line;
+	char *endptr, *trimmed_ptr = trimmed_line;
 	size_t len = strlen(line);
-	int data;
+	long int data;
 
 	while (isspace(*line))
 		line++;
@@ -64,21 +73,22 @@ void handle_instruction(stack_t **stack, char *line,
 	if (strcmp(opcode, "stack") == 0)
 	{
 		*mode = STACK;
-		return;
-	}
+		return; }
 	else if (strcmp(opcode, "queue") == 0)
 	{
 		*mode = QUEUE;
-		return;
-	}
+		return; }
 	else if (strcmp(opcode, "push") == 0)
 	{
 		if (sscanf(line, "%*s %[^\n]", arg) != 1)
 		{
 			handle_error(stack, file, line_number, "usage: push integer");
-			exit(EXIT_FAILURE);
-		}
-		data = atoi(arg);
+			exit(EXIT_FAILURE); }
+		data = strtol(arg, &endptr, 10);
+		if (*endptr != '\0')
+		{
+			handle_error(stack, file, line_number, "usage: push integer");
+			exit(EXIT_FAILURE); }
 		if (*mode == STACK)
 			push(stack, data);
 		else if (*mode == QUEUE)
@@ -86,8 +96,7 @@ void handle_instruction(stack_t **stack, char *line,
 		return;
 	}
 	else
-		execute_instruction(stack, opcode, line_number, file, &mode);
-}
+		execute_instruction(stack, opcode, line_number, file, &mode); }
 /**
  * execute_instruction - function that executes the opcode instructions.
  * @stack:  This is the pointer to the top of the stack.
@@ -105,7 +114,6 @@ void execute_instruction(stack_t **stack, char *opcode,
 	char arg[100] = "";
 
 	arg[strcspn(arg, " \t\n")] = '\0';
-
 	if (strcmp(opcode, "pall") == 0)
 		pall(stack);
 	else if (strcmp(opcode, "pint") == 0)
@@ -120,7 +128,11 @@ void execute_instruction(stack_t **stack, char *opcode,
 		else if (**mode == QUEUE)
 			dequeue(stack, line_number); }
 	else if (strcmp(opcode, "swap") == 0)
-		swap(stack, line_number);
+	{
+		if (*stack == NULL || (*stack)->next == NULL)
+			handle_error(stack, file, line_number, "can't swap, stack too short");
+		else
+			swap(stack, line_number); }
 	else if (strcmp(opcode, "add") == 0)
 		add(stack, line_number);
 	else if (strcmp(opcode, "nop") == 0)

@@ -62,6 +62,6 @@ void execute_mod(stack_t **stack, unsigned int line_number)
 void execute_pchar(stack_t **stack, unsigned int line_number)
 {
 	if (*stack == NULL)
-		handle_error(stack, NULL, line_number, "can't pint, stack empty");
+		handle_error(stack, NULL, line_number, "can't pchar, stack empty");
 	pchar_stack(stack, line_number);
 }
